@@ -1,0 +1,45 @@
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  line-height: 1.15;
+}
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+img, picture, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-style: none;
+}
+a {
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+ul, ol {
+  list-style: none;
+}
+button, input, select, textarea {
+  font: inherit;
+  line-height: inherit;
+  margin: 0;
+  outline: none;
+  border: none;
+}
+button {
+  cursor: pointer;
+}
+input::placeholder {
+  opacity: 1;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 400;
+}

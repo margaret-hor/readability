@@ -1,191 +1,134 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import logo from '../../assets/logo.svg';
+import { useState } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import styles from './Login.module.scss';
-import cx from 'classnames';
-import { BiError } from "react-icons/bi";
-import { TbEyeClosed } from "react-icons/tb";
-import { FaEye } from "react-icons/fa";
 
 export default function Login() {
-  const [isLogin, setIsLogin] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+
   const [formData, setFormData] = useState({
-    name: '',
     email: '',
     password: ''
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const { login, signup } = useAuth();
-  const navigate = useNavigate();
+  const [serverError, setServerError] = useState('');
+
+  const message = location.state?.message;
 
   function handleChange(e) {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  }
+
+  const validateForm = () => {
+    setServerError('');
+    const newErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!emailRegex.test(formData.email.trim())) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+    if (!formData.password || formData.password.trim().length < 6) {
+      newErrors.password = 'Password is required and should contain at least 6 characters';
+    }
+
+    return newErrors;
   };
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setError('');
+    setServerError('');
+    const validationErrors = validateForm();
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
+
     setLoading(true);
-
     try {
-      if (!formData.email || !formData.password) {
-        throw new Error('Please fill in all fields');
-      }
-      if (!isLogin && !formData.name) {
-        throw new Error('Enter your name');
-      }
-
-      const email = formData.email.trim().toLowerCase();
-      const password = formData.password.trim();
-      const name = formData.name.trim();
-
-      if (isLogin) {
-        await login(email, password);
-      } else {
-        await signup(email, password, name);
-      }
-
-      navigate('/dashboard');
+      await login(formData.email, formData.password);
     } catch (error) {
-      console.error('Full error object:', error); 
+      console.error("Login error:", error);
 
-      if (error.code === 'auth/invalid-credential') {
-        setError('Invalid email or password. Please try again.');
-      } else if (error.code === 'auth/email-already-in-use') {
-        setError('This email is already in use');
-      } else if (error.code === 'auth/wrong-password') {
-        setError('Incorrect password');
-      } else if (error.code === 'auth/user-not-found') {
-        setError('No account found with this email. Please sign up.');
-      } else if (error.code === 'auth/weak-password') {
-        setError('Password must be at least 6 characters long');
-      } else if (error.code === 'auth/invalid-email') {
-        setError('Invalid email address format');
-      } else if (error.code === 'auth/too-many-requests') {
-        setError('Too many failed attempts. Please try again later.');
-      } else {
-        setError(error.message || 'Failed to authenticate. Please try again.');
+      switch (error.code) {
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+          setServerError('Invalid email or password');
+          break;
+        case 'auth/too-many-requests':
+          setServerError('Too many attempts. Try again later');
+          break;
+        default:
+          setServerError(error.message);
       }
     } finally {
       setLoading(false);
     }
   }
 
-  function toggleMode() {
-    setIsLogin(!isLogin);
-    setError('');
-    setFormData({ name: '', email: '', password: '' });
-  }
-
-  const Icons = {
-    Error: () => <span className={cx('error-icon')}><BiError /></span>,
-    EyeClosed: () => <span className={cx('eye-closed-icon')}><TbEyeClosed /></span>,
-    EyeOpen: () => <span className={cx('eye-icon')}><FaEye /></span>
-  };
   return (
-    <section className={styles.loginPage}>
-      <div className={styles.loginContainer}>
-        <header className={styles.loginHeader}>
-          <div className={styles.logo}>
-            <img src={logo} className={styles.logoImg} alt="logo" />
-            <span className={styles.logoText}>StudyFlow</span>
-          </div>
-          <div className={styles.welcomeText}>
-            <h1 className={styles.title}>
-              {isLogin ? 'Welcome back' : 'Start studying effectively'}
-            </h1>
-            <p className={styles.subtitle}>
-              {isLogin ? 'Log in to your account to access all features' : 'Create an account and gain access to powerful learning tools'}
-            </p>
-          </div>
-        </header>
+    <div className={styles.loginPage}>
+      <h2 className={styles.title}>login</h2>
 
-        <div className={styles.loginCard}>
-          {error && (
-            <div className={cx('error-alert')}>
-              <Icons.Error />
-              <span className={cx('error-text')}>{error}</span>
-            </div>
-          )}
-          <div className={styles.loginForm}>
-            {!isLogin && (
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Name</label>
-                <div className={styles.inputWrapper}>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Enter your name"
-                    className={styles.formInput}
-                    disabled={loading}
-                  />
-                </div>
-              </div>
-            )}
+      {message && <div className={styles.message}>{message}</div>}
+      {serverError && <div className={styles.serverError}>{serverError}</div>}
 
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>Email</label>
-              <div className={styles.inputWrapper}>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="example@email.com"
-                  className={styles.formInput}
-                  disabled={loading}
-                />
-              </div>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>Password</label>
-              <div className={styles.inputWrapper}>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Enter password"
-                  className={styles.formInput}
-                  disabled={loading}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className={styles.passwordToggle}
-                  disabled={loading}
-                >
-                  {showPassword ? <Icons.EyeClosed /> : <Icons.EyeOpen />}
-                </button>
-              </div>
-            </div>
-
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className={styles.submitButton}
-            >
-              {loading ? (
-                <>
-                  <span className={styles.loadingSpinner} />
-                  Loading...
-                </>
-              ) : (
-                isLogin ? 'Login' : 'Create account'
-              )}
-            </button>
-          </div>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.inputGroup}>
+          <label htmlFor="email">Email *</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            disabled={loading}
+            placeholder="example@mail.com"
+          />
+          {errors.email && <span className={styles.error}>{errors.email}</span>}
         </div>
-      </div>
-    </section>
+        <div className={styles.inputGroup}>
+          <label htmlFor="password">Password *</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            disabled={loading}
+            placeholder="123456"
+          />
+          {errors.password && <span className={styles.error}>{errors.password}</span>}
+        </div>
+
+        <button type="submit" disabled={loading}>
+          {loading ? 'Logging...' : 'Log in'}
+        </button>
+      </form>
+
+      {/* <p className={styles.forgotPassword}>
+        <Link to="/forgot-password">Forgot password?</Link>
+      </p> */}
+
+      <p>
+        Don't have an account? <Link to="/signup">Sign up</Link>
+      </p>
+    </div>
   );
 }

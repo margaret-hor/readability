@@ -1,13 +1,7 @@
-import { useState, createContext, useContext, useEffect } from "react";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  updateProfile
-} from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "../lib/firebase";
+import { createContext, useContext, useState, useEffect } from "react";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../lib/firebase';
 
 const AuthContext = createContext();
 
@@ -21,22 +15,23 @@ export function AuthProvider({ children }) {
 
   async function signup(email, password, displayName) {
     try {
-      //add user to Firebase Auth
+      //create user
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // add name to profile
+      //add name to profile
       await updateProfile(user, { displayName });
 
-      await auth.currentUser?.reload();
-
-      // create doc for user in Firestore
-      await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        createdAt: new Date().toISOString()
-      });
+      //save in firestore
+      await setDoc(
+        doc(db, 'users', user.uid),
+        {
+          uid: user.uid,
+          email: user.email,
+          displayName: displayName,
+          createdAt: Date.now()
+        }
+      );
 
       return user;
     } catch (error) {
@@ -45,9 +40,6 @@ export function AuthProvider({ children }) {
     }
   }
 
-  //=================
-  // LOGIN
-  //=================
   async function login(email, password) {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -58,9 +50,6 @@ export function AuthProvider({ children }) {
     }
   }
 
-  //=================
-  // LOGOUT
-  //=================
   async function logout() {
     try {
       await signOut(auth);
@@ -70,14 +59,15 @@ export function AuthProvider({ children }) {
     }
   }
 
-  //============================
-  // LISTEN TO PROFILE CHANGES
-  //============================
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       setLoading(false);
+    }, (error) => {
+      console.error('Auth state change error:', error);
+      setLoading(false);
     });
+
     return unsubscribe;
   }, []);
 
@@ -85,7 +75,8 @@ export function AuthProvider({ children }) {
     currentUser,
     signup,
     login,
-    logout
+    logout,
+    loading
   };
 
   return (
