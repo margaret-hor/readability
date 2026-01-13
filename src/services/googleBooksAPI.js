@@ -1,6 +1,7 @@
 import { formatGoogleBooks, formatGoogleBook } from "../utils/formatters";
 
-const API_BASE = '/api';
+const API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY;
+const BASE_URL = 'https://www.googleapis.com/books/v1/';
 
 export async function searchBooks(query, maxResults = 30) {
   try {
@@ -8,22 +9,13 @@ export async function searchBooks(query, maxResults = 30) {
       throw new Error('Query must be a non-empty string');
     }
 
-    const url = `${API_BASE}/books?q=${encodeURIComponent(query)}&maxResults=${maxResults}`;
+    const url = `${BASE_URL}volumes?q=${encodeURIComponent(query)}&key=${API_KEY}&maxResults=${maxResults}`;
 
     const response = await fetch(url);
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `Failed to fetch books: ${response.status}`);
-    }
+    if (!response.ok) throw new Error('Failed to fetch books');
 
     const data = await response.json();
-    console.log('API Response:', data);
-
-    if (!data.items) {
-      console.warn('No items in response:', data);
-      return [];
-    }
+    console.log(data);
 
     return formatGoogleBooks(data.items);
   } catch (error) {
@@ -36,7 +28,7 @@ export async function getBookId(bookId) {
   try {
     if (!bookId) throw new Error('Book ID is required');
 
-    const url = `${API_BASE}/book?id=${bookId}`;
+    const url = `${BASE_URL}/volumes/${bookId}?key=${API_KEY}`;
 
     const response = await fetch(url);
 
@@ -48,9 +40,9 @@ export async function getBookId(bookId) {
     }
 
     const data = await response.json();
-    console.log('Book detail response:', data);
-
-    return formatGoogleBook(data);
+    console.log(data);
+    
+    return formatGoogleBook(data)
   } catch (error) {
     console.error('Error fetching book:', error);
     throw error;
