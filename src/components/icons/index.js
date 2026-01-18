@@ -9,3 +9,19 @@ export { default as LibraryIcon } from './LibraryIcon';
 export { default as CalendarIcon } from './CalendarIcon';
 export { default as NotesIcon } from './NotesIcon';
 export { default as LogoutIcon } from './LogoutIcon';
+
+export { default as SearchIcon } from './SearchIcon';
+export { default as SavedIcon } from './SavedIcon';
+export { default as CloseIcon } from './CloseIcon';
+export { default as FilterIcon } from './FilterIcon';
+export { default as ErrorIcon } from './ErrorIcon';
+export { default as LinkIcon } from './LinkIcon';
+
+export { default as GridIcon } from './GridIcon';
+export { default as ListIcon } from './ListIcon';
+export { default as RemoveIcon } from './RemoveIcon';
+
+export { default as MenuIcon } from './MenuIcon';
+
+export {default as ArrowRightIcon } from './ArrowRightIcon';
+export {default as ArrowLeftIcon } from './ArrowLeftIcon';

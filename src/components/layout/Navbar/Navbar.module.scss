@@ -1,24 +1,40 @@
 @use '../../../styles/abstracts/index' as a;
 
-.navbar {
+.overlay {
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
   bottom: 0;
-  z-index: 30;
-  background-color: rgba(#fff, .8);
-  backdrop-filter: blur(20px);
-  border-right: 1px solid a.$gray-200;
+  background-color: rgba(#000, 0.5);
+  z-index: 35;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.navbar {
+  display: none;
 }
 
 .container {
-  max-width: 230px;
-  margin: 0 auto;
+  width: 100%;
+  height: 100%;
   padding: a.$spacing-4 a.$spacing-6;
+  display: flex;
+  flex-direction: column;
 }
 
 .logo {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 5px;
   margin-bottom: a.$spacing-8;
@@ -31,9 +47,13 @@
   }
 }
 
-.logoImg {
-  max-width: 35px;
-  max-height: 35px;
+.logoIcon {
+  flex-shrink: 0;
+
+  .logoImg {
+    width: 35px;
+    height: 35px;
+  }
 }
 
 .logoText {
@@ -49,6 +69,8 @@
 }
 
 .navLinks {
+  flex: 1;
+
   li:not(:last-child) {
     margin-bottom: a.$spacing-2;
   }
@@ -77,15 +99,20 @@
   }
 }
 
-.userSection {
+.navIcon {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: a.$spacing-3;
-  position: absolute;
-  bottom: a.$spacing-10;
-  left: 0;
-  right: 0;
+}
+
+.userSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: a.$spacing-2;
+  padding-top: a.$spacing-4;
+  border-top: 1px solid a.$gray-200;
 }
 
 .userInfo {
@@ -105,23 +132,25 @@
   font-weight: 700;
   font-size: a.$font-sm;
   box-shadow: a.$shadow-primary;
+  flex-shrink: 0;
 }
 
 .userName {
   font-size: a.$font-sm;
   font-weight: 500;
   color: a.$gray-700;
-  max-width: 150px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  max-width: 80px;
 }
 
 .logoutButton {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: a.$spacing-2;
-  padding: a.$spacing-4 a.$spacing-2;
+  padding: a.$spacing-2;
   border-radius: a.$radius-lg;
   border: 1px solid a.$gray-300;
   background-color: #fff;
@@ -131,9 +160,208 @@
   cursor: pointer;
   transition: all .3s ease;
 
+  span {
+    display: none;
+  }
+
   &:hover {
     background-color: a.$gray-50;
     border-color: a.$gray-400;
     color: a.$gray-900;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.bottomNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  background-color: rgba(#fff, .98);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid a.$gray-200;
+  padding: a.$spacing-2 a.$spacing-2;
+  box-shadow: 0 -2px 10px rgba(#000, 0.05);
+}
+
+.bottomNavLinks {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: a.$spacing-1;
+}
+
+.bottomNavLink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: a.$spacing-2;
+  border-radius: a.$radius-md;
+  color: a.$gray-600;
+  font-weight: 500;
+  font-size: 11px;
+  transition: all .3s ease;
+  flex: 1;
+  max-width: 80px;
+  background: none;
+  border: none;
+
+  &:hover {
+    color: a.$gray-900;
+  }
+
+  &.active {
+    color: a.$primary;
+
+    .navIcon {
+      background: linear-gradient(135deg, rgba(a.$primary, 0.1), rgba(a.$accent, 0.1));
+      box-shadow: 0 0 0 1px rgba(a.$primary, 0.2);
+    }
+  }
+
+  .navIcon {
+    padding: a.$spacing-2;
+    border-radius: a.$radius-md;
+    transition: all .3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .navLabel {
+    text-align: center;
+    line-height: 1.2;
+  }
+}
+
+.mobileMenu {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background-color: #fff;
+  border-radius: a.$radius-xl a.$radius-xl 0 0;
+  box-shadow: 0 -4px 20px rgba(#000, 0.15);
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+
+  &.open {
+    transform: translateY(0);
+  }
+}
+
+.mobileMenuContent {
+  padding: a.$spacing-6 a.$spacing-4 a.$spacing-4;
+}
+
+.userProfile {
+  display: flex;
+  align-items: center;
+  gap: a.$spacing-4;
+  padding: a.$spacing-4;
+  background: linear-gradient(135deg, rgba(a.$primary, .05), rgba(a.$accent, .05));
+  border-radius: a.$radius-lg;
+  margin-bottom: a.$spacing-4;
+
+  .userAvatar {
+    width: 50px;
+    height: 50px;
+    font-size: a.$font-lg;
+  }
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+
+  .userName {
+    font-size: a.$font-base;
+    font-weight: 600;
+    color: a.$gray-900;
+  }
+}
+
+.userEmail {
+  font-size: a.$font-sm;
+  color: a.$gray-600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mobileMenu .logoutButton {
+  width: 100%;
+  padding: a.$spacing-4;
+  justify-content: center;
+
+  span {
+    display: inline;
+  }
+
+  &:hover {
+    background-color: a.$gray-50;
+  }
+}
+
+@include a.bp-devices(tablet) {
+  .overlay {
+    display: none;
+  }
+
+  .navbar {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 30;
+    background-color: #fff;
+    border-right: 1px solid a.$gray-200;
+    max-width: 230px;
+  }
+
+  .navIcon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .bottomNav {
+    display: none;
+  }
+
+  .mobileMenu {
+    display: none;
+  }
+}
+
+@include a.bp-devices(s-laptop) {
+  .navbar {
+    max-width: 260px;
+  }
+
+  .userName {
+    max-width: 120px;
+  }
+
+  .logoutButton {
+    padding: a.$spacing-3;
+
+    span {
+      display: inline;
+    }
   }
 }

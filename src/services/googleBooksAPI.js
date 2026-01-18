@@ -1,56 +1,96 @@
-import { formatGoogleBooks, formatGoogleBook } from "../utils/formatters";
+import { formatGoogleBook } from '../utils/formatters';
+import { GOOGLE_BOOKS_API_URL, MAX_RESULTS_PER_REQUEST } from '../utils/constants';
 
-const API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY;
-const BASE_URL = 'https://www.googleapis.com/books/v1/';
+const API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY || '';
 
-export async function searchBooks(query, maxResults = 30) {
+export async function searchBooks(query, options = {}) {
   try {
-    if (!query || typeof query !== 'string') {
-      throw new Error('Query must be a non-empty string');
+    const {
+      maxResults = 30,
+      startIndex = 0,
+      printType = 'all',
+      filter = 'all',
+      langRestrict = '',
+    } = options;
+
+    const params = new URLSearchParams({
+      q: query.trim(),
+      maxResults: Math.min(maxResults, MAX_RESULTS_PER_REQUEST),
+      startIndex,
+      printType,
+    });
+
+    if (filter && filter !== 'all') {
+      params.append('filter', filter);
     }
 
-    const url = `${BASE_URL}volumes?q=${encodeURIComponent(query)}&key=${API_KEY}&maxResults=${maxResults}`;
+    if (langRestrict) {
+      params.append('langRestrict', langRestrict);
+    }
 
+    if (API_KEY) {
+      params.append('key', API_KEY);
+    }
+
+    const url = `${GOOGLE_BOOKS_API_URL}?${params.toString()}`;
+    
     const response = await fetch(url);
-    if (!response.ok) throw new Error('Failed to fetch books');
+    
+    if (!response.ok) {
+      throw new Error(`Google Books API error: ${response.status} ${response.statusText}`);
+    }
 
     const data = await response.json();
 
-    return formatGoogleBooks(data.items);
+    const books = (data.items || [])
+      .map(item => formatGoogleBook(item))
+      .filter(Boolean);
+    
+    const totalItems = data.totalItems || 0;
+
+    return {
+      books,
+      totalItems,
+    };
   } catch (error) {
     console.error('Error searching books:', error);
     throw error;
   }
 }
 
-export async function getBookId(bookId) {
+export async function getBookById(bookId) {
   try {
-    if (!bookId) throw new Error('Book ID is required');
+    const params = new URLSearchParams();
+    
+    if (API_KEY) {
+      params.append('key', API_KEY);
+    }
 
-    const url = `${BASE_URL}/volumes/${bookId}?key=${API_KEY}`;
-
+    const url = `${GOOGLE_BOOKS_API_URL}/${bookId}${params.toString() ? '?' + params.toString() : ''}`;
+    
     const response = await fetch(url);
-
+    
     if (!response.ok) {
-      if (response.status === 404) {
-        throw new Error('Book not found');
-      }
-      throw new Error(`API error: ${response.status}`);
+      throw new Error(`Failed to fetch book: ${response.status}`);
     }
 
     const data = await response.json();
-    
-    return formatGoogleBook(data)
+    return formatGoogleBook(data);
   } catch (error) {
-    console.error('Error fetching book:', error);
+    console.error('Error fetching book details:', error);
     throw error;
   }
 }
 
-export async function searchByCategory(category, maxResults = 30) {
-  return searchBooks(`subject:${category}`, maxResults);
+export async function getBooksBySubject(subject, options = {}) {
+  return searchBooks(`subject:${subject}`, options);
 }
 
-export async function searchByAuthor(author, maxResults = 30) {
-  return searchBooks(`inauthor:${author}`, maxResults);
+export async function getBooksByAuthor(author, options = {}) {
+  return searchBooks(`inauthor:${author}`, options);
+}
+
+export async function getBookByIsbn(isbn) {
+  const { books } = await searchBooks(`isbn:${isbn}`, { maxResults: 1 });
+  return books[0] || null;
 }

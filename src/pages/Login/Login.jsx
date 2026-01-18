@@ -56,8 +56,8 @@ export default function Login() {
     } else if (!emailRegex.test(formData.email.trim())) {
       newErrors.email = 'Please enter a valid email address';
     }
-    if (!formData.password || formData.password.trim().length < 6) {
-      newErrors.password = 'Password should contain at least 6 characters';
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
     }
 
     return newErrors;

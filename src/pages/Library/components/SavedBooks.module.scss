@@ -1,0 +1,489 @@
+@use "../../../styles/abstracts/index" as a;
+
+.savedBooks {
+  width: 100%;
+  min-height: 100vh;
+  background-color: a.$light-bg;
+  display: flex;
+  flex-direction: column;
+  gap: a.$spacing-4;
+  padding: a.$spacing-4;
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: a.$spacing-3;
+  padding: a.$spacing-4;
+  background-color: a.$light-bg;
+  border: 1px solid a.$light-border;
+  border-radius: a.$radius-xl;
+  box-shadow: a.$shadow-sm;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: a.$primary;
+  }
+}
+
+.searchBox {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: a.$spacing-3;
+  padding: a.$spacing-3;
+  background-color: a.$light-bg;
+  border: 1px solid a.$light-border;
+  border-radius: a.$radius-lg;
+  transition: all .3s ease;
+
+  &:focus-within {
+    border-color: a.$primary;
+    box-shadow: 0 0 0 3px rgba(a.$primary, 0.1);
+  }
+
+  svg {
+    color: a.$gray-500;
+    width: 20px;
+    height: 20px;
+  }
+
+  input {
+    border: none;
+    background-color: transparent;
+    font-size: a.$font-sm;
+    color: a.$light-text-primary;
+    outline: none;
+
+    &::placeholder {
+      color: a.$light-text-tertiary;
+    }
+  }
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: a.$spacing-3;
+  align-items: center;
+}
+
+.select {
+  flex: 1;
+  min-width: 150px;
+  padding: a.$spacing-3;
+  background-color: a.$gray-50;
+  border: 1px solid a.$light-border;
+  border-radius: a.$radius-lg;
+  font-size: a.$font-sm;
+  color: a.$light-text-primary;
+
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+
+  cursor: pointer;
+  transition: all .3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: a.$primary;
+    background-color: a.$light-bg;
+    box-shadow: 0 0 0 3px rgba(a.$primary, 0.1);
+  }
+
+  option {
+    padding: a.$spacing-2;
+  }
+}
+
+.viewToggle {
+  display: flex;
+  gap: a.$spacing-1;
+  padding: a.$spacing-1;
+  background-color: a.$gray-50;
+  border: 1px solid a.$light-border;
+  border-radius: a.$radius-lg;
+
+  button {
+    padding: a.$spacing-2;
+    background-color: transparent;
+    border: none;
+    border-radius: a.$radius-md;
+    color: a.$gray-400;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: a.$gray-100;
+      color: a.$gray-600;
+    }
+
+    &.active {
+      background: a.$primary;
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(a.$primary, 0.2);
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: a.$spacing-4;
+  padding: a.$spacing-12;
+  color: a.$light-text-secondary;
+
+  p {
+    font-size: a.$font-sm;
+    font-weight: 500;
+  }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid a.$gray-200;
+  border-top-color: a.$primary;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: a.$spacing-12 a.$spacing-5;
+  text-align: center;
+  background-color: a.$light-bg;
+  border: 1px solid a.$light-border;
+  border-radius: a.$radius-xl;
+  box-shadow: a.$shadow-sm;
+}
+
+.emptyIcon {
+  margin-bottom: a.$spacing-6;
+  width: 120px;
+  height: 120px;
+  opacity: 0.6;
+}
+
+.emptyState h2 {
+  font-size: a.$font-lg;
+  font-weight: 600;
+  color: a.$light-text-primary;
+  margin: 0 0 a.$spacing-2 0;
+}
+
+.emptyState p {
+  font-size: a.$font-sm;
+  color: a.$light-text-secondary;
+  margin-bottom: a.$spacing-6;
+  max-width: 400px;
+}
+
+.clearButton {
+  padding: a.$spacing-3 a.$spacing-6;
+  background-color: a.$gray-50;
+  border: 1px solid a.$light-border;
+  border-radius: a.$radius-lg;
+  font-size: a.$font-sm;
+  font-weight: 500;
+  color: a.$light-text-secondary;
+  transition: all .3s ease;
+
+  &:hover {
+    border-color: a.$primary;
+    color: a.$primary;
+    background-color: rgba(a.$primary, 0.05);
+  }
+}
+
+.emptyButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: a.$spacing-2;
+  padding: a.$spacing-4 a.$spacing-8;
+  background: a.$gradient-primary;
+  color: #fff;
+  border: none;
+  border-radius: a.$radius-lg;
+  font-size: a.$font-base;
+  font-weight: 600;
+  transition: all .3s ease;
+  box-shadow: a.$shadow-primary;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px -5px rgba(a.$primary, 0.4);
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.grid {
+  display: grid;
+  gap: a.$spacing-4;
+
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+
+  &.listView {
+    grid-template-columns: 1fr;
+    gap: a.$spacing-3;
+  }
+}
+
+.bookItem {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: a.$light-bg;
+  border: 1px solid a.$light-border;
+  border-radius: a.$radius-xl;
+  overflow: hidden;
+  box-shadow: a.$shadow-sm;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: a.$primary;
+    box-shadow: a.$shadow-primary;
+    transform: translateY(-2px);
+  }
+
+  .removeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: a.$spacing-2;
+    width: 100%;
+    padding: a.$spacing-3;
+    margin-top: auto;
+    background-color: rgba(a.$error, 0.05);
+    color: a.$error;
+    border: 1px solid rgba(a.$error, 0.1);
+    border-top: none;
+    font-size: a.$font-sm;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: rgba(a.$error, 0.1);
+      border-color: rgba(a.$error, 0.2);
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+@include a.bp-devices(m-mobile) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+}
+
+@include a.bp-devices(l-mobile) {
+  .savedBooks {
+    padding: a.$spacing-6;
+    gap: a.$spacing-5;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+@include a.bp-devices(tablet) {
+  .toolbar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: a.$spacing-5;
+  }
+
+  .searchBox {
+    width: 280px;
+  }
+
+  .filters {
+    gap: a.$spacing-4;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: a.$spacing-5;
+  }
+
+  .emptyIcon {
+    width: 140px;
+    height: 140px;
+  }
+
+  .emptyState h2 {
+    font-size: a.$font-xl;
+  }
+
+  .emptyState p {
+    font-size: a.$font-base;
+  }
+}
+
+@include a.bp-devices(s-laptop) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+
+    &.listView {
+      gap: a.$spacing-4;
+
+      .bookItem {
+        flex-direction: row;
+        align-items: center;
+        padding: a.$spacing-4;
+        gap: a.$spacing-4;
+
+        > :first-child {
+          flex: 1;
+        }
+
+        .removeButton {
+          width: auto;
+          padding: a.$spacing-3 a.$spacing-4;
+          border: 1px solid rgba(a.$error, 0.1);
+          border-radius: a.$radius-lg;
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  .searchBox {
+    width: 320px;
+  }
+
+  .toolbar {
+    padding: a.$spacing-6;
+  }
+}
+
+@include a.bp-devices(l-laptop) {
+  .savedBooks {
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+
+  .emptyIcon {
+    width: 160px;
+    height: 160px;
+  }
+}
+
+@include a.bp-devices(monitor4k) {
+  .savedBooks {
+    padding: a.$spacing-8;
+    gap: a.$spacing-6;
+  }
+
+  .toolbar {
+    padding: a.$spacing-8;
+  }
+
+  .searchBox {
+    width: 400px;
+
+    input {
+      font-size: a.$font-base;
+    }
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .select {
+    padding: a.$spacing-4;
+    font-size: a.$font-base;
+  }
+
+  .viewToggle button {
+    padding: a.$spacing-3;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: a.$spacing-6;
+
+    &.listView {
+      gap: a.$spacing-5;
+    }
+  }
+
+  .bookItem .removeButton {
+    padding: a.$spacing-4;
+    font-size: a.$font-base;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .emptyIcon {
+    width: 180px;
+    height: 180px;
+  }
+
+  .emptyState h2 {
+    font-size: a.$font-2xl;
+  }
+
+  .emptyState p {
+    font-size: a.$font-lg;
+  }
+
+  .clearButton {
+    padding: a.$spacing-4 a.$spacing-8;
+    font-size: a.$font-base;
+  }
+
+  .emptyButton {
+    padding: a.$spacing-5 a.$spacing-10;
+    font-size: a.$font-lg;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}

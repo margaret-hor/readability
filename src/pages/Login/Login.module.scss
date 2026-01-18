@@ -11,7 +11,6 @@
   overflow: hidden;
 }
 
-// Decorative background blobs
 .bgBlob1 {
   top: -100px;
   right: -100px;
@@ -32,7 +31,6 @@
   z-index: 1;
 }
 
-// Logo section
 .logoSection {
   text-align: center;
   margin-bottom: a.$spacing-8;
@@ -67,7 +65,6 @@
   color: a.$gray-600;
 }
 
-// Card
 .card {
   background: rgba(a.$light-bg, 0.3);
   backdrop-filter: blur(20px);
@@ -76,7 +73,6 @@
   box-shadow: a.$shadow-xl;
 }
 
-// Form
 .form {
   display: flex;
   flex-direction: column;
@@ -135,7 +131,6 @@
   color: a.$error;
 }
 
-// Remember email
 .checkbox {
   display: flex;
   align-items: center;
@@ -194,14 +189,12 @@
   }
 }
 
-// Submit Button
 .submitButton {
   font-size: a.$font-base;
   padding: a.$spacing-4;
   margin-top: a.$spacing-2;
 }
 
-// Sign Up Link
 .signupLink {
   text-align: center;
   font-size: a.$font-sm;
@@ -219,7 +212,6 @@
   }
 }
 
-// Responsive
 @include a.bp-devices(tablet) {
   .loginPage {
     padding: a.$spacing-6;
