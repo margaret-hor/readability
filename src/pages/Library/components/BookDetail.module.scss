@@ -759,19 +759,93 @@
 }
 
 .comment {
-  padding: a.$spacing-3;
+  padding: a.$spacing-4;
   background-color: a.$light-bg-secondary;
   border-radius: a.$radius-lg;
+  border: 1px solid a.$light-border;
+  transition: all 0.2s ease;
 
-  p {
-    margin-bottom: a.$spacing-2;
-    line-height: 1.5;
+  &:hover {
+    border-color: a.$primary;
+    box-shadow: a.$shadow-sm;
   }
+}
+
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: a.$spacing-3;
+}
+
+.commentUser {
+  display: flex;
+  align-items: center;
+  gap: a.$spacing-3;
+}
+
+.userAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: a.$gradient-primary;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: a.$font-sm;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(a.$primary, 0.2);
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: a.$spacing-1;
+}
+
+.userName {
+  font-size: a.$font-sm;
+  font-weight: 600;
+  color: a.$light-text-primary;
 }
 
 .commentDate {
   font-size: a.$font-xs;
   color: a.$light-text-secondary;
+}
+
+.commentText {
+  font-size: a.$font-sm;
+  color: a.$light-text-primary;
+  line-height: 1.6;
+}
+
+.deleteButton {
+  padding: a.$spacing-2;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: a.$radius-md;
+  color: a.$light-text-tertiary;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) {
+    background-color: rgba(a.$error, 0.1);
+    border-color: rgba(a.$error, 0.2);
+    color: a.$error;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
 }
 
 .noComments {
@@ -866,6 +940,29 @@
     font-size: a.$font-sm;
     padding: a.$spacing-2 a.$spacing-3;
   }
+
+  .userAvatar {
+    width: 40px;
+    height: 40px;
+    font-size: a.$font-base;
+  }
+
+  .userName {
+    font-size: a.$font-base;
+  }
+
+  .commentText {
+    font-size: a.$font-base;
+  }
+
+  .deleteButton {
+    padding: a.$spacing-2 a.$spacing-3;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
 }
 
 @include a.bp-devices(s-laptop) {
@@ -902,6 +999,14 @@
 
   .metaInfo {
     padding: a.$spacing-5;
+  }
+
+  .comment {
+    padding: a.$spacing-5;
+  }
+
+  .commentHeader {
+    margin-bottom: a.$spacing-4;
   }
 }
 

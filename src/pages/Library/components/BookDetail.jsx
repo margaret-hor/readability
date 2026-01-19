@@ -2,24 +2,34 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { getBookById } from '../../../services/googleBooksAPI';
 import { useLibrary } from '../../../hooks/useLibrary';
+import { useComments } from '../../../hooks/useComments';
+import { useAuth } from '../../../contexts/AuthContext';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import styles from './BookDetail.module.scss';
-import { ArrowLeftIcon, ArrowRightIcon } from '../../../components/icons';
+import { ArrowLeftIcon, ArrowRightIcon, RemoveIcon } from '../../../components/icons';
 import emptyLibraryIcon from "../../../assets/icons/empty_library_icon.svg";
 
 export default function BookDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { currentUser } = useAuth();
+
   const {
     savedBooks,
     saveBook,
     updateProgress,
     addNote,
-    addComment,
     isBookSaved
   } = useLibrary();
+
+  const { 
+    comments, 
+    loading: commentsLoading, 
+    addComment, 
+    deleteComment 
+  } = useComments(id);
 
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,6 +42,7 @@ export default function BookDetail() {
   const [newComment, setNewComment] = useState('');
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [pageInputValue, setPageInputValue] = useState('');
+  const [deletingComment, setDeletingComment] = useState(null);
 
   const savedBook = savedBooks.find(b => b.id === id);
   const isSaved = isBookSaved(id);
@@ -137,9 +148,28 @@ export default function BookDetail() {
   }
 
   async function handleAddComment() {
-    if (newComment.trim() && savedBook) {
-      await addComment(savedBook.firestoreId, newComment);
+    if (!newComment.trim()) return;
+
+    try {
+      await addComment(id, newComment);
       setNewComment('');
+    } catch (error) {
+      console.error('Failed to add comment:', error);
+      alert('Failed to add comment. Please try again.');
+    }
+  }
+
+  async function handleDeleteComment(commentId, commentUserId) {
+    if (!confirm('Delete this comment?')) return;
+
+    setDeletingComment(commentId);
+    try {
+      await deleteComment(commentId, commentUserId);
+    } catch (error) {
+      console.error('Failed to delete comment:', error);
+      alert(error.message || 'Failed to delete comment');
+    } finally {
+      setDeletingComment(null);
     }
   }
 
@@ -150,6 +180,26 @@ export default function BookDetail() {
     } else {
       navigate('/library');
     }
+  }
+
+  function formatCommentDate(timestamp) {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+    });
   }
 
   const markdownPlaceholder = `# My Book Notes
@@ -218,7 +268,7 @@ Write your detailed notes here...
               />
             ) : (
               <div className={styles.noCover}>
-                <emptyLibraryIcon />
+                <img src={emptyLibraryIcon} alt="no cover" />
                 <p>No Cover Available</p>
               </div>
             )}
@@ -318,8 +368,7 @@ Write your detailed notes here...
                   <button
                     key={jump.label}
                     onClick={() => jumpToPercentage(jump.value)}
-                    className={`${styles.quickJumpButton} ${progress >= jump.value ? styles.active : ''
-                      }`}
+                    className={`${styles.quickJumpButton} ${progress >= jump.value ? styles.active : ''}`}
                     aria-label={`Jump to ${jump.label}`}
                   >
                     {jump.label}
@@ -380,21 +429,19 @@ Write your detailed notes here...
               Overview
             </button>
             {isSaved && (
-              <>
-                <button
-                  className={`${styles.tab} ${activeTab === 'notes' ? styles.active : ''}`}
-                  onClick={() => setActiveTab('notes')}
-                >
-                  Notes
-                </button>
-                <button
-                  className={`${styles.tab} ${activeTab === 'comments' ? styles.active : ''}`}
-                  onClick={() => setActiveTab('comments')}
-                >
-                  Comments ({savedBook?.comments?.length || 0})
-                </button>
-              </>
+              <button
+                className={`${styles.tab} ${activeTab === 'notes' ? styles.active : ''}`}
+                onClick={() => setActiveTab('notes')}
+              >
+                Notes
+              </button>
             )}
+            <button
+              className={`${styles.tab} ${activeTab === 'comments' ? styles.active : ''}`}
+              onClick={() => setActiveTab('comments')}
+            >
+              Comments ({comments.length})
+            </button>
           </div>
 
           <div className={styles.tabContent}>
@@ -463,16 +510,17 @@ Write your detailed notes here...
               </div>
             )}
 
-            {activeTab === 'comments' && isSaved && (
+            {activeTab === 'comments' && (
               <div className={styles.comments}>
-                <h2>My Comments</h2>
+                <h2>Community Comments</h2>
 
                 <div className={styles.commentForm}>
                   <textarea
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Add a comment or highlight..."
+                    placeholder="Share your thoughts about this book..."
                     rows={3}
+                    disabled={!currentUser}
                   />
                   <button
                     onClick={handleAddComment}
@@ -483,20 +531,49 @@ Write your detailed notes here...
                   </button>
                 </div>
 
-                <div className={styles.commentsList}>
-                  {savedBook?.comments && savedBook.comments.length > 0 ? (
-                    savedBook.comments.map((comment, i) => (
-                      <div key={i} className={styles.comment}>
-                        <p>{comment.text}</p>
-                        <span className={styles.commentDate}>
-                          {new Date(comment.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                    ))
-                  ) : (
-                    <p className={styles.noComments}>No comments yet. Add your first thought!</p>
-                  )}
-                </div>
+                {commentsLoading ? (
+                  <div className={styles.loading}>
+                    <div className={styles.spinner}></div>
+                    <p>Loading comments...</p>
+                  </div>
+                ) : (
+                  <div className={styles.commentsList}>
+                    {comments.length > 0 ? (
+                      comments.map((comment) => (
+                        <div key={comment.id} className={styles.comment}>
+                          <div className={styles.commentHeader}>
+                            <div className={styles.commentUser}>
+                              <div className={styles.userAvatar}>
+                                {comment.userName.charAt(0).toUpperCase()}
+                              </div>
+                              <div className={styles.userInfo}>
+                                <span className={styles.userName}>{comment.userName}</span>
+                                <span className={styles.commentDate}>
+                                  {formatCommentDate(comment.createdAt)}
+                                </span>
+                              </div>
+                            </div>
+                            {currentUser && currentUser.uid === comment.userId && (
+                              <button
+                                onClick={() => handleDeleteComment(comment.id, comment.userId)}
+                                disabled={deletingComment === comment.id}
+                                className={styles.deleteButton}
+                                aria-label="Delete comment"
+                              >
+                                <RemoveIcon />
+                              </button>
+                            )}
+                          </div>
+                          <p className={styles.commentText}>{comment.text}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className={styles.noComments}>
+                        No comments yet. Be the first to share your thoughts!
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </div>

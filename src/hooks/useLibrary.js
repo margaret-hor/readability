@@ -58,7 +58,6 @@ export function useLibrary() {
         startedAt: null,
         finishedAt: null,
         tags: [],
-        comments: [],
         lastRead: null
       });
 
@@ -118,18 +117,6 @@ export function useLibrary() {
     return updateBook(firestoreId, { notes: note });
   }
 
-  async function addComment(firestoreId, comment) {
-    const book = savedBooks.find(b => b.firestoreId === firestoreId);
-    const comments = book?.comments || [];
-
-    return updateBook(firestoreId, {
-      comments: [...comments, {
-        text: comment,
-        createdAt: Date.now()
-      }]
-    });
-  }
-
   const isBookSaved = (bookId) => savedBooks.some(book => book.id === bookId);
 
   const getBookByFirestoreId = (firestoreId) => {
@@ -144,7 +131,6 @@ export function useLibrary() {
     removeBook,
     updateProgress,
     addNote,
-    addComment,
     isBookSaved,
     getBookByFirestoreId
   };
