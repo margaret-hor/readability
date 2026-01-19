@@ -6,7 +6,7 @@ import {
   onAuthStateChanged,
   updateProfile
 } from "firebase/auth";
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
 
 const AuthContext = createContext();
@@ -24,12 +24,48 @@ export function AuthProvider({ children }) {
     try {
       const userDoc = await getDoc(doc(db, 'users', uid));
       if (userDoc.exists()) {
-        setUserProfile(userDoc.data());
+        const data = userDoc.data();
+        const profileData = {
+          ...data,
+          yearlyGoal: data.yearlyGoal || 24
+        };
+        setUserProfile(profileData);
+      } else {
+        const defaultProfile = {
+          uid: uid,
+          email: currentUser?.email || '',
+          displayName: currentUser?.displayName || '',
+          yearlyGoal: 24,
+          createdAt: Date.now()
+        };
+        await setDoc(doc(db, 'users', uid), defaultProfile);
+        setUserProfile(defaultProfile);
       }
     } catch (error) {
       console.error('Error fetching user profile:', error);
     }
   };
+
+  const updateYearlyGoal = async (newGoal) => {
+    if (!currentUser) return;
+
+    try {
+      await updateDoc(doc(db, 'users', currentUser.uid), {
+        yearlyGoal: newGoal
+      });
+
+      setUserProfile(prev => ({
+        ...prev,
+        yearlyGoal: newGoal
+      }));
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error updating yearly goal:', error);
+      throw error;
+    }
+  };
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -63,6 +99,7 @@ export function AuthProvider({ children }) {
           uid: user.uid,
           email: user.email,
           displayName: displayName,
+          yearlyGoal: 24,
           createdAt: Date.now()
         }
       );
@@ -114,7 +151,8 @@ export function AuthProvider({ children }) {
     login,
     logout,
     loading,
-    refreshProfile: () => currentUser && fetchUserProfile(currentUser.uid)
+    refreshProfile: () => currentUser && fetchUserProfile(currentUser.uid),
+    updateYearlyGoal
   };
 
   return (

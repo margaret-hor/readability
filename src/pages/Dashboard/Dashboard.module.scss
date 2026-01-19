@@ -1,0 +1,606 @@
+@use '../../styles/abstracts/index' as a;
+
+.dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: a.$spacing-4;
+}
+
+.welcome {
+  margin-bottom: a.$spacing-6;
+  padding: a.$spacing-5;
+  background-color: a.$light-bg;
+  border: 1px solid a.$light-border;
+  border-radius: a.$radius-xl;
+  box-shadow: a.$shadow-sm;
+}
+
+.title {
+  font-size: a.$font-xl;
+  font-weight: 700;
+  color: a.$light-text-primary;
+  margin-bottom: a.$spacing-2;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: a.$font-sm;
+  color: a.$light-text-secondary;
+}
+
+.statsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: a.$spacing-3;
+  margin-bottom: a.$spacing-5;
+}
+
+.statCard {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: a.$spacing-4;
+  padding: a.$spacing-4;
+  background-color: a.$light-bg;
+  border: 1px solid a.$light-border;
+  border-radius: a.$radius-xl;
+  box-shadow: a.$shadow-sm;
+  transition: all .3s ease;
+
+  &:hover {
+    border-color: a.$primary;
+    box-shadow: a.$shadow-primary;
+    transform: translateY(-2px);
+  }
+}
+
+.statIcon {
+  display: grid;
+  place-content: center;
+  width: 48px;
+  height: 48px;
+  background: a.$gradient-primary;
+  border-radius: a.$radius-lg;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.statContent {
+  display: flex;
+  flex-direction: column;
+  gap: a.$spacing-1;
+}
+
+.statLabel {
+  font-size: a.$font-xs;
+  color: a.$light-text-secondary;
+  text-transform: capitalize;
+}
+
+.statValue {
+  font-size: a.$font-2xl;
+  font-weight: 700;
+  color: a.$light-text-primary;
+}
+
+.dashboardContent {
+  display: flex;
+  flex-wrap: wrap;
+  gap: a.$spacing-5;
+}
+
+.metricsSection,
+.recentSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: a.$spacing-5;
+}
+
+.card {
+  padding: a.$spacing-5;
+  background-color: a.$light-bg;
+  border: 1px solid a.$light-border;
+  border-radius: a.$radius-xl;
+  box-shadow: a.$shadow-sm;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: a.$spacing-5;
+
+  h2 {
+    font-size: a.$font-lg;
+    font-weight: 600;
+    color: a.$light-text-primary;
+    display: flex;
+    align-items: center;
+    gap: a.$spacing-2;
+
+    svg {
+      color: a.$primary;
+    }
+  }
+}
+
+.goalInput {
+  max-width: 45px;
+  padding: a.$spacing-2 a.$spacing-3;
+  background-color: a.$gray-50;
+  border: 1px solid a.$light-border;
+  border-radius: a.$radius-md;
+  font-size: a.$font-sm;
+  font-weight: 600;
+  color: a.$light-text-primary;
+  text-align: center;
+
+  &:focus {
+    outline: none;
+    border-color: a.$primary;
+    box-shadow: 0 0 0 3px rgba(a.$primary, .1);
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  &[type=number] {
+    -moz-appearance: textfield;
+  }
+}
+
+.goalContent {
+  text-align: center;
+}
+
+.goalStats {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: a.$spacing-2;
+  margin-bottom: a.$spacing-4;
+}
+
+.goalCurrent {
+  font-size: 3rem;
+  font-weight: 700;
+  color: a.$primary;
+  line-height: 1;
+}
+
+.goalSeparator {
+  font-size: a.$font-xl;
+  color: a.$gray-300;
+  font-weight: 300;
+}
+
+.goalTarget {
+  font-size: a.$font-xl;
+  color: a.$light-text-secondary;
+  font-weight: 600;
+}
+
+.goalLabel {
+  font-size: a.$font-sm;
+  color: a.$light-text-tertiary;
+  margin-left: a.$spacing-1;
+}
+
+.progressBar {
+  height: 12px;
+  background-color: a.$gray-200;
+  border-radius: a.$radius-xl;
+  overflow: hidden;
+  margin-bottom: a.$spacing-4;
+}
+
+.progressFill {
+  height: 100%;
+  background: a.$gradient-primary;
+  border-radius: a.$radius-xl;
+  transition: width .5s ease;
+}
+
+.goalMessage {
+  font-size: a.$font-sm;
+  color: a.$light-text-secondary;
+  margin: 0;
+  padding: a.$spacing-3;
+  background-color: a.$gray-50;
+  border-radius: a.$radius-lg;
+}
+
+.pagesContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: a.$spacing-5;
+}
+
+.pagesCircle {
+  position: relative;
+  width: 160px;
+  height: 160px;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.pagesText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.pagesNumber {
+  display: block;
+  font-size: a.$font-2xl;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: a.$spacing-1;
+}
+
+.pagesLabel {
+  display: block;
+  font-size: a.$font-xs;
+  color: a.$light-text-secondary;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.pagesStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: a.$spacing-4;
+  width: 100%;
+}
+
+.pagesStat {
+  flex: 1;
+  text-align: center;
+  padding: a.$spacing-3;
+  background-color: a.$gray-50;
+  border-radius: a.$radius-lg;
+}
+
+.pagesStatValue {
+  display: block;
+  font-size: a.$font-xl;
+  font-weight: 700;
+  color: a.$primary;
+  margin-bottom: a.$spacing-1;
+}
+
+.pagesStatLabel {
+  display: block;
+  font-size: a.$font-xs;
+  color: a.$light-text-secondary;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.viewAll {
+  font-size: a.$font-sm;
+  font-weight: 500;
+  color: a.$primary;
+  transition: all .2s ease;
+
+  &:hover {
+    color: a.$primary-dark;
+  }
+}
+
+.recentBooks {
+  display: flex;
+  flex-direction: column;
+  gap: a.$spacing-3;
+}
+
+.recentBook {
+  display: flex;
+  gap: a.$spacing-3;
+  padding: a.$spacing-3;
+  border-radius: a.$radius-lg;
+  border: 1px solid transparent;
+  transition: all .3s ease;
+
+  &:hover {
+    background: a.$gray-50;
+    border-color: a.$light-border;
+  }
+}
+
+.recentCover {
+  width: 50px;
+  height: 75px;
+  border-radius: a.$radius-md;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: a.$gray-100;
+}
+
+.recentNoCover {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: a.$gray-400;
+
+  img {
+    width: 24px;
+    height: 24px;
+    opacity: 0.5;
+  }
+}
+
+.recentInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: a.$spacing-1;
+  min-width: 0;
+
+  h3 {
+    font-size: a.$font-sm;
+    font-weight: 600;
+    color: a.$light-text-primary;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  p {
+    font-size: a.$font-xs;
+    color: a.$light-text-secondary;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.recentProgress {
+  display: flex;
+  align-items: center;
+  gap: a.$spacing-2;
+  margin-top: a.$spacing-1;
+
+  span {
+    font-size: a.$font-xs;
+    color: a.$primary;
+    font-weight: 600;
+    min-width: 35px;
+  }
+}
+
+.recentProgressBar {
+  flex: 1;
+  height: 3px;
+  background: a.$gray-200;
+  border-radius: a.$radius-sm;
+  overflow: hidden;
+}
+
+.recentProgressFill {
+  height: 100%;
+  background: a.$gradient-primary;
+  border-radius: a.$radius-sm;
+  transition: width .3s ease;
+}
+
+.emptyRecent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: a.$spacing-10 a.$spacing-4;
+  text-align: center;
+  gap: a.$spacing-3;
+
+  p {
+    margin: 0;
+    font-size: a.$font-sm;
+    color: a.$light-text-secondary;
+  }
+}
+
+.emptyIcon {
+  width: 80px;
+  height: 80px;
+  opacity: 0.4;
+}
+
+.emptyLink {
+  padding: a.$spacing-3 a.$spacing-5;
+  background: a.$gradient-primary;
+  color: #fff;
+  border-radius: a.$radius-lg;
+  font-size: a.$font-sm;
+  font-weight: 600;
+  transition: all .3s ease;
+  box-shadow: a.$shadow-primary;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px -5px rgba(a.$primary, 0.4);
+  }
+}
+
+@include a.bp-devices(l-mobile) {
+  .title {
+    font-size: a.$font-2xl;
+  }
+
+  .subtitle {
+    font-size: a.$font-base;
+  }
+
+  .statsGrid {
+    gap: a.$spacing-4;
+  }
+
+  .statValue {
+    font-size: a.$font-xl;
+  }
+
+  .goalInput {
+    max-width: 70px;
+  }
+
+  .recentCover {
+    width: 60px;
+    height: 90px;
+  }
+
+  .recentBook {
+    padding: a.$spacing-4;
+    gap: a.$spacing-4;
+  }
+
+  .recentInfo h3 {
+    font-size: a.$font-base;
+  }
+
+  .recentInfo p {
+    font-size: a.$font-sm;
+  }
+}
+
+@include a.bp-devices(tablet) {
+  .dashboard {
+    padding: a.$spacing-6;
+  }
+
+  .welcome {
+    margin-bottom: a.$spacing-8;
+  }
+
+  .title {
+    font-size: a.$font-3xl;
+  }
+
+  .statsGrid {
+    margin-bottom: a.$spacing-6;
+  }
+
+  .statCard {
+    padding: a.$spacing-5;
+  }
+
+  .statIcon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .card {
+    padding: a.$spacing-6;
+  }
+
+  .pagesCircle {
+    width: 180px;
+    height: 180px;
+  }
+
+  .pagesStats {
+    gap: a.$spacing-6;
+  }
+
+  .emptyIcon {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@include a.bp-devices(s-laptop) {
+  .goalCurrent {
+    font-size: 4rem;
+  }
+
+  .goalTarget {
+    font-size: a.$font-2xl;
+  }
+
+  .pagesNumber {
+    font-size: a.$font-3xl;
+  }
+
+  .pagesStatValue {
+    font-size: a.$font-2xl;
+  }
+}
+
+@include a.bp-devices(l-laptop) {
+  .dashboard {
+    padding: a.$spacing-8;
+  }
+
+  .welcome {
+    padding: a.$spacing-8;
+  }
+
+  .statIcon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .statValue {
+    font-size: a.$font-3xl;
+  }
+
+  .card {
+    padding: a.$spacing-8;
+  }
+
+  .cardHeader {
+    margin-bottom: a.$spacing-6;
+  }
+}
+
+@include a.bp-devices(monitor4k) {
+  .dashboard {
+    padding: a.$spacing-10;
+  }
+
+  .welcome {
+    padding: a.$spacing-10;
+  }
+
+  .statsGrid {
+    gap: a.$spacing-6;
+  }
+
+  .statCard {
+    padding: a.$spacing-6;
+  }
+
+  .dashboardContent {
+    gap: a.$spacing-8;
+  }
+
+  .metricsSection,
+  .recentSection {
+    gap: a.$spacing-8;
+  }
+
+  .pagesCircle {
+    width: 220px;
+    height: 220px;
+  }
+
+  .emptyIcon {
+    width: 120px;
+    height: 120px;
+  }
+}
