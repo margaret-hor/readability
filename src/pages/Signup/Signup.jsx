@@ -110,7 +110,7 @@ export default function Signup() {
             <img src={logo} className={`${styles.logoImg} img-cover`} alt="logo" />
           </div>
           <h1 className={styles.title}>Create Account</h1>
-          <p className={styles.subtitle}>Start your learning journey with <span className={styles.logoTitle}>StudyFlow</span></p>
+          <p className={styles.subtitle}>Start your learning journey with <span className={styles.logoTitle}>ReadAbility</span></p>
         </div>
 
         <div className={styles.card}>
@@ -204,7 +204,7 @@ export default function Signup() {
                 />
                 <button
                   type="button"
-                  onClick={() => setShowConfirmPassword(!showPassword)}
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className={styles.togglePassword}
                   tabIndex={-1}
                   aria-label={showConfirmPassword ? "Hide password" : "Show password"}

@@ -129,7 +129,7 @@ export default function Login() {
         <div className={styles.logoSection}>
           <div className={styles.logo}>
             <img src={logo} className={`${styles.logoImg} img-cover`} alt="logo" />
-            <h1 className={styles.title}>StudyFlow</h1>
+            <h1 className={styles.title}>ReadAbility</h1>
           </div>
           <p className={styles.subtitle}>Welcome back! Please login to your account.</p>
         </div>

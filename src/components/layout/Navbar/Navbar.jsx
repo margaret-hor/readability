@@ -39,7 +39,7 @@ export default function Navbar() {
             <div className={styles.logoIcon}>
               <img src={logo} className={`${styles.logoImg} img-cover`} alt="logo" />
             </div>
-            <span className={styles.logoText}>StudyFlow</span>
+            <span className={styles.logoText}>ReadAbility</span>
           </Link>
 
           <ul className={styles.navLinks}>

@@ -1,8 +1,8 @@
-# StudyFlow
+# ReadAbility
 
 Book tracking web app for managing your reading progress and library.
 
-**Live Demo:** [my-studyflow-app.vercel.app](https://my-studyflow-app.vercel.app)
+**Live Demo:** [my-readability-app.vercel.app](https://my-readability-app.vercel.app)
 
 ## ✨ Features
 
@@ -23,8 +23,8 @@ Book tracking web app for managing your reading progress and library.
 ## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/margaret-hor/studyflow.git
-cd studyflow
+git clone https://github.com/margaret-hor/readability.git
+cd readability
 npm install
 npm run dev
 ```
