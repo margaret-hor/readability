@@ -17,7 +17,8 @@ export async function searchBooks(query, options = {}) {
       q: query.trim(),
       maxResults: Math.min(maxResults, MAX_RESULTS_PER_REQUEST),
       startIndex,
-      printType
+      printType,
+      fields: 'totalItems,items(id,volumeInfo(title,authors,imageLinks/thumbnail,publishedDate,averageRating))'
     });
 
     if (filter && filter !== 'all') {
